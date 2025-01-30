@@ -5,66 +5,109 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Titan Potion and Skin Stone Calculator</title>
     <style>
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-        table, th, td {
-            border: 1px solid black;
-        }
-        th, td {
-            padding: 8px;
-        }
-        th {
-            background-color: #f2f2f2;
-            text-align: left;
-        }
-        td.no-of-levels, th.no-of-levels {
-            text-align: center;
-        }
-        td.potions-required, th.potions-required,
-        td.skin-stones-required, th.skin-stones-required {
-            text-align: right;
-        }
-        input {
-            width: 50px;
-            text-align: center;
-        }
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap');
 
-        /* Added aesthetics */
-        body {
-            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-            font-family: 'Roboto', sans-serif;
-            line-height: 1.6;
-            color: #333;
-        }
+* {
+    font-size: 16px;
+}
 
-        table {
-            background-color: white;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            border-radius: 8px;
-            overflow: hidden;
-        }
+html, body {
+    height: 100%;
+    margin: 0;
+}
 
-        thead {
-            background-color: #4a90e2;
-            color: blue;
-        }
+body {
+    background: linear-gradient(135deg, #b4b6b8 0%, #b1caf3 100%);
+    min-height: 95vh;
+    font-family: 'Roboto', sans-serif;
+    line-height: 1.6;
+    color: #333;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px 20px 0 20px;
+    /* box-sizing: border-box; */
+}
 
-        tbody tr:nth-child(even) {
-            background-color: #f8f9fa;
-        }
+h1 {
+    text-align: center;
+    color: #2c3e50;
+    font-size: 2.5rem;
+    margin-bottom: 20px;
+}
 
-        tbody tr:hover {
-            background-color: #e9ecef;
-            transition: background-color 0.3s ease;
-        }
+table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    background-color: white;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    overflow: hidden;
+}
 
-        td.merged-cell {
-            font-weight: bold;
-            vertical-align: top;
-            background-color: #f8f9fa; /* Match the background color of the table rows */
-        }
+table, th, td {
+    border: 1px solid #ddd;
+}
+
+th, td {
+    padding: 4px 8px;
+    text-align: left;
+}
+
+th {
+    background-color: #4a90e2;
+    color: white;
+    font-weight: 700;
+}
+
+thead {
+    background-color: #4a90e2;
+    color: white;
+}
+
+table thead tr:first-child {
+    font-size: 1.2rem; /* Adjust this value as needed */
+    font-weight: bold;
+}
+
+table thead tr:first-child th {
+    font-size: inherit; /* This ensures the th elements inherit the font size */
+}
+
+
+tbody tr:nth-child(even) {
+    background-color: #f8f9fa;
+}
+
+tbody tr:hover {
+    background-color: #e9ecef;
+    transition: background-color 0.3s ease;
+}
+
+td.no-of-levels, th.no-of-levels, td.no-of-skin-levels, th.no-of-skin-levels {
+    text-align: center;
+}
+
+td.potions-required, th.potions-required,
+td.skin-stones-required, th.skin-stones-required {
+    text-align: right;
+}
+
+input[type="number"] {
+    font-size: 0.95rem;
+    width: 80px;
+    padding: 8px;
+    text-align: center;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+td.merged-cell {
+    font-weight: bold;
+    vertical-align: top;
+    background-color: #f8f9fa;
+}
+
 
     </style>
 </head>
@@ -77,7 +120,7 @@
                 <th class="no-of-levels" id="totalLevels">0</th>
                 <th class="potions-required" id="totalPotions">0</th>
                 <th colspan="2"></th>
-                <th class="no-of-levels" id="totalSkinLevels">0</th>
+                <th class="no-of-skin-levels" id="totalSkinLevels">0</th>
                 <th class="skin-stones-required" id="totalSkinStones">0</th>
             </tr>
             <tr>
@@ -89,15 +132,16 @@
                 <th class="potions-required">Total Potions Required</th>
                 <th>Current Skin Level</th>
                 <th>Desired Skin Level</th>
-                <th class="no-of-levels">No of Skin Levels</th>
+                <th class="no-of-skin-levels">No of Skin Levels</th>
                 <th class="skin-stones-required">Total Skin Stones Required</th>
             </tr>
         </thead>
+        
         <tbody>
             <!-- Rows will be populated by JavaScript -->
         </tbody>
     </table>
-
+    
     <script>
         // Data
         // const titanElements = ["Water", "Water", "Water", "Water", "Earth", "Earth", "Earth", "Earth", "Fire", "Fire", "Fire", "Fire", "Light", "Light", "Light", "Light", "Dark", "Dark", "Dark", "Dark"];
@@ -208,35 +252,63 @@ function populateTable() {
             elementRowSpan--;
         }
 
-        const currentLevel = index === 0 ? 65 : 65;
+        const currentLevel = 65;
         const desiredLevel = index === 0 ? 70 : 65;
-        const currentSkinLevel = index === 0 ? 30 : 30;
+        const currentSkinLevel = 30;
         const desiredSkinLevel = index === 0 ? 31 : 30;
 
         row.innerHTML = `
-            ${elementRowSpan === 4 ? `<td rowspan="4" class="merged-cell">${currentElement}</td>` : ""}
+            ${elementRowSpan === 4 ? `<td rowspan="4">${currentElement}</td>` : ""}
             <td>${name}</td>
-            <td><input type="number" class="current-level" value="${currentLevel}" min="1" max="130"></td>
-            <td><input type="number" class="desired-level" value="${desiredLevel}" min="1" max="130"></td>
+            <td><input type="number" class="current-level" min="1" max="130" value="${currentLevel}"></td>
+            <td><input type="number" class="desired-level" min="1" max="130" value="${desiredLevel}"></td>
             <td class="no-of-levels">0</td>
             <td class="potions-required">0</td>
-            <td><input type="number" class="current-skin-level" value="${currentSkinLevel}" min="1" max="60"></td>
-            <td><input type="number" class="desired-skin-level" value="${desiredSkinLevel}" min="1" max="60"></td>
+            <td><input type="number" class="current-skin-level" min="1" max="60" value="${currentSkinLevel}"></td>
+            <td><input type="number" class="desired-skin-level" min="1" max="60" value="${desiredSkinLevel}"></td>
             <td class="no-of-skin-levels">0</td>
             <td class="skin-stones-required">0</td>
         `;
         tableBody.appendChild(row);
     });
 
-    // Add event listeners to inputs
-    const inputs = document.querySelectorAll("#titanTable tbody input");
-    inputs.forEach(input => {
+    // Rest of the function remains the same
+    const potionInputs = [...document.querySelectorAll(".current-level, .desired-level")];
+    const skinInputs = [...document.querySelectorAll(".current-skin-level, .desired-skin-level")];
+    const allInputs = [...potionInputs, ...skinInputs];
+
+    allInputs.forEach((input, index) => {
         input.addEventListener("input", updateCalculations);
+        input.addEventListener("keydown", function(e) {
+            if (e.key === "Tab") {
+                e.preventDefault();
+                let nextIndex;
+                if (e.shiftKey) {
+                    if (index === 0) {
+                        nextIndex = allInputs.length - 1;
+                    } else if (index === potionInputs.length) {
+                        nextIndex = potionInputs.length - 1;
+                    } else {
+                        nextIndex = index - 1;
+                    }
+                } else {
+                    if (index === potionInputs.length - 1) {
+                        nextIndex = potionInputs.length;
+                    } else if (index === allInputs.length - 1) {
+                        nextIndex = 0;
+                    } else {
+                        nextIndex = index + 1;
+                    }
+                }
+                allInputs[nextIndex].focus();
+            }
+        });
     });
 
-    // Initial calculation
+    potionInputs[0].focus();
     updateCalculations();
 }
+
 
 
 
