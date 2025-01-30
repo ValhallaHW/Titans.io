@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Titan Potion and Skin Stone Calculator</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        table, th, td {
+            border: 1px solid black;
+        }
+        th, td {
+            padding: 8px;
+        }
+        th {
+            background-color: #f2f2f2;
+            text-align: left;
+        }
+        td.no-of-levels, th.no-of-levels {
+            text-align: center;
+        }
+        td.potions-required, th.potions-required,
+        td.skin-stones-required, th.skin-stones-required {
+            text-align: right;
+        }
+        input {
+            width: 50px;
+            text-align: center;
+        }
+
+        /* Added aesthetics */
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            font-family: 'Roboto', sans-serif;
+            line-height: 1.6;
+            color: #333;
+        }
+
+        table {
+            background-color: white;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        thead {
+            background-color: #4a90e2;
+            color: blue;
+        }
+
+        tbody tr:nth-child(even) {
+            background-color: #f8f9fa;
+        }
+
+        tbody tr:hover {
+            background-color: #e9ecef;
+            transition: background-color 0.3s ease;
+        }
+
+        td.merged-cell {
+            font-weight: bold;
+            vertical-align: top;
+            background-color: #f8f9fa; /* Match the background color of the table rows */
+        }
+
+    </style>
+</head>
+<body>
+    <h1>Titan Potion and Skin Stone Calculator</h1>
+    <table id="titanTable">
+        <thead>
+            <tr>
+                <th colspan="4">Total</th>
+                <th class="no-of-levels" id="totalLevels">0</th>
+                <th class="potions-required" id="totalPotions">0</th>
+                <th colspan="2"></th>
+                <th class="no-of-levels" id="totalSkinLevels">0</th>
+                <th class="skin-stones-required" id="totalSkinStones">0</th>
+            </tr>
+            <tr>
+                <th>Titan Element</th>
+                <th>Titan Name</th>
+                <th>Current Level</th>
+                <th>Desired Level</th>
+                <th class="no-of-levels">No of Levels</th>
+                <th class="potions-required">Total Potions Required</th>
+                <th>Current Skin Level</th>
+                <th>Desired Skin Level</th>
+                <th class="no-of-levels">No of Skin Levels</th>
+                <th class="skin-stones-required">Total Skin Stones Required</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Rows will be populated by JavaScript -->
+        </tbody>
+    </table>
+
+    <script>
+        // Data
+        // const titanElements = ["Water", "Water", "Water", "Water", "Earth", "Earth", "Earth", "Earth", "Fire", "Fire", "Fire", "Fire", "Light", "Light", "Light", "Light", "Dark", "Dark", "Dark", "Dark"];
+        // const titanNames = ["Sigurd", "Hyperion", "Nova", "Mairi", "Eden", "Angus", "Sylva", "Avalon", "Moloch", "Araji", "Vulcan", "Ignis", "Rigel", "Amon", "Iyari", "Solaris", "Brustar", "Keros", "Mort", "Tenebris"];
+        const titanElements = ["Water", "Water", "Water", "Water", "Fire", "Fire", "Fire", "Fire", "Earth", "Earth", "Earth", "Earth", "Dark", "Dark", "Dark", "Dark", "Light", "Light", "Light", "Light"];
+        const titanNames = ["Sigurd", "Hyperion", "Nova", "Mairi", "Moloch", "Araji", "Vulcan", "Ignis", "Angus", "Eden", "Sylva", "Avalon", "Brustar", "Tenebris", "Keros", "Mort", "Rigel", "Solaris", "Amon", "Iyari"];
+        const potionsPerLevel = [100, 110, 120, 130, 140, 150, 160, 170, 180, 190, 200, 210, 220, 230, 240, 250, 260, 270, 280, 290, 300, 310, 320, 330, 340, 350, 360, 370, 380, 390, 440, 490, 540, 590, 640, 690, 740, 790, 840, 890, 940, 990, 1040, 1090, 1140, 1190, 1240, 1290, 1340, 1390, 1490, 1590, 1690, 1790, 1890, 1990, 2090, 2190, 2290, 2390, 2490, 2590, 2690, 2790, 2890, 2990, 3090, 3190, 3290, 3390, 3590, 3790, 3990, 4190, 4390, 4590, 4790, 4990, 5190, 5390, 5590, 5990, 6390, 6790, 7190, 7590, 7990, 8390, 8790, 9190, 9590, 9990, 10390, 10790, 11190, 11590, 11990, 12390, 12790, 13390, 13990, 14590, 15190, 15790, 16390, 16990, 17590, 18190, 18790, 19590, 20390, 21190, 21990, 22790, 23590, 24390, 25190, 25990, 26790, 27790, 28790, 29790, 30790, 31790, 32790, 33790, 34790, 35790, 36790];
+        const skinStonesPerLevel = [375, 375, 375, 375, 563, 563, 563, 563, 563, 1050, 1050, 1050, 1050, 1050, 1294, 1294, 1294, 1294, 1294, 2074, 2074, 2074, 2074, 2074, 2464, 2464, 2464, 2464, 2464, 3946, 3946, 3946, 3946, 3946, 4687, 4687, 4687, 4687, 4687, 7799, 7799, 7799, 7799, 7799, 9356, 9356, 9356, 9356, 9356, 16825, 16825, 16825, 16825, 16825, 20559, 20559, 20559, 20559, 20559];
+
+        // Function to calculate total potions required
+        function calculatePotions(currentLevel, desiredLevel) {
+            let totalPotions = 0;
+            for (let i = currentLevel; i < desiredLevel; i++) {
+                totalPotions += potionsPerLevel[i - 1];
+            }
+            return totalPotions;
+        }
+
+        // Function to calculate total skin stones required
+        function calculateSkinStones(currentSkinLevel, desiredSkinLevel) {
+            let totalSkinStones = 0;
+            for (let i = currentSkinLevel; i < desiredSkinLevel; i++) {
+                totalSkinStones += skinStonesPerLevel[i - 1];
+            }
+            return totalSkinStones;
+        }
+
+        // Function to format numbers with commas
+        function formatNumber(num) {
+            return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+        }
+
+        // Function to update row calculations and grand totals
+        function updateCalculations() {
+            const rows = document.querySelectorAll("#titanTable tbody tr");
+            let totalLevels = 0;
+            let totalPotions = 0;
+            let totalSkinLevels = 0;
+            let totalSkinStones = 0;
+
+            rows.forEach(row => {
+                const currentLevelInput = row.querySelector(".current-level");
+                const desiredLevelInput = row.querySelector(".desired-level");
+                const currentSkinLevelInput = row.querySelector(".current-skin-level");
+                const desiredSkinLevelInput = row.querySelector(".desired-skin-level");
+                const noOfLevelsCell = row.querySelector(".no-of-levels");
+                const potionsRequiredCell = row.querySelector(".potions-required");
+                const noOfSkinLevelsCell = row.querySelector(".no-of-skin-levels");
+                const skinStonesRequiredCell = row.querySelector(".skin-stones-required");
+
+                const currentLevel = parseInt(currentLevelInput.value, 10);
+                const desiredLevel = parseInt(desiredLevelInput.value, 10);
+                const currentSkinLevel = parseInt(currentSkinLevelInput.value, 10);
+                const desiredSkinLevel = parseInt(desiredSkinLevelInput.value, 10);
+
+                // Validate potion levels
+                if (currentLevel < 1 || currentLevel > 130 || desiredLevel < 1 || desiredLevel > 130 || currentLevel > desiredLevel) {
+                    noOfLevelsCell.textContent = "Invalid";
+                    potionsRequiredCell.textContent = "Invalid";
+                } else {
+                    const noOfLevels = desiredLevel - currentLevel;
+                    const potionsRequired = calculatePotions(currentLevel, desiredLevel);
+
+                    noOfLevelsCell.textContent = noOfLevels;
+                    potionsRequiredCell.textContent = formatNumber(potionsRequired);
+
+                    totalLevels += noOfLevels;
+                    totalPotions += potionsRequired;
+                }
+
+                // Validate skin levels
+                if (currentSkinLevel < 1 || currentSkinLevel > 60 || desiredSkinLevel < 1 || desiredSkinLevel > 60 || currentSkinLevel > desiredSkinLevel) {
+                    noOfSkinLevelsCell.textContent = "Invalid";
+                    skinStonesRequiredCell.textContent = "Invalid";
+                } else {
+                    const noOfSkinLevels = desiredSkinLevel - currentSkinLevel;
+                    const skinStonesRequired = calculateSkinStones(currentSkinLevel, desiredSkinLevel);
+
+                    noOfSkinLevelsCell.textContent = noOfSkinLevels;
+                    skinStonesRequiredCell.textContent = formatNumber(skinStonesRequired);
+
+                    totalSkinLevels += noOfSkinLevels;
+                    totalSkinStones += skinStonesRequired;
+                }
+            });
+
+            // Update grand totals
+            document.getElementById("totalLevels").textContent = totalLevels;
+            document.getElementById("totalPotions").textContent = formatNumber(totalPotions);
+            document.getElementById("totalSkinLevels").textContent = totalSkinLevels;
+            document.getElementById("totalSkinStones").textContent = formatNumber(totalSkinStones);
+        }
+
+// Function to populate the table
+function populateTable() {
+    const tableBody = document.querySelector("#titanTable tbody");
+
+    let currentElement = "";
+    let elementRowSpan = 0;
+
+    titanNames.forEach((name, index) => {
+        const row = document.createElement("tr");
+
+        if (titanElements[index] !== currentElement) {
+            currentElement = titanElements[index];
+            elementRowSpan = 4;
+        } else {
+            elementRowSpan--;
+        }
+
+        const currentLevel = index === 0 ? 65 : 65;
+        const desiredLevel = index === 0 ? 70 : 65;
+        const currentSkinLevel = index === 0 ? 30 : 30;
+        const desiredSkinLevel = index === 0 ? 31 : 30;
+
+        row.innerHTML = `
+            ${elementRowSpan === 4 ? `<td rowspan="4" class="merged-cell">${currentElement}</td>` : ""}
+            <td>${name}</td>
+            <td><input type="number" class="current-level" value="${currentLevel}" min="1" max="130"></td>
+            <td><input type="number" class="desired-level" value="${desiredLevel}" min="1" max="130"></td>
+            <td class="no-of-levels">0</td>
+            <td class="potions-required">0</td>
+            <td><input type="number" class="current-skin-level" value="${currentSkinLevel}" min="1" max="60"></td>
+            <td><input type="number" class="desired-skin-level" value="${desiredSkinLevel}" min="1" max="60"></td>
+            <td class="no-of-skin-levels">0</td>
+            <td class="skin-stones-required">0</td>
+        `;
+        tableBody.appendChild(row);
+    });
+
+    // Add event listeners to inputs
+    const inputs = document.querySelectorAll("#titanTable tbody input");
+    inputs.forEach(input => {
+        input.addEventListener("input", updateCalculations);
+    });
+
+    // Initial calculation
+    updateCalculations();
+}
+
+
+
+        // Populate the table on page load
+        window.onload = populateTable;
+    </script>
+</body>
+</html>
